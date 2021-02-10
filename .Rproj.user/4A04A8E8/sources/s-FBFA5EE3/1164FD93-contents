@@ -1,0 +1,36 @@
+# Load libraries
+library(data.table)
+library(lubridate)
+
+# 1 Read in data
+transactions <- fread("transactions.csv")
+transactions[, TransDate:=dmy(TransDate)]
+
+# 1.	Create a function that divides two variables.
+# ============================================================
+# Define function
+divide <- function(x, y){
+  result1 <- x / y
+  return(result1)
+}
+
+# Apply function
+divide(1,2) 
+
+# 2.	Create a function that simulates two dices (output: sum of both dices). 
+# Add an argument to change probabilities of outcomes (rigged dice). Hint: use the sample() command.
+# ============================================================
+# Define function
+dice.roll <- function(px=rep(1/6,6), py=rep(1/6,6)){
+  dice1 <- sample(1:6, 1, prob = px)
+  dice2 <- sample(1:6, 1, prob = py)
+  result <- sum(dice1, dice2)
+  return(result)
+}
+
+# Apply function using default probabilities 
+dice.roll()
+
+# Apply function using different probabilities
+dice.roll(px=c(rep(0.1,3), rep(0.2,3)), 
+          py=c(rep(0.05,3), rep(0.3,3))) 

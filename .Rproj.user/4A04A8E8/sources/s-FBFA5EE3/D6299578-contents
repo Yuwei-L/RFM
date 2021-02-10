@@ -1,0 +1,9 @@
+addFirstTwo <-function(vec){
+  browser()
+  print(vec[1])
+  print(vec[2])
+  return(vec[1]+vec[2])
+}
+addFirstTwo(c(1,3))
+
+mean(1:10, trim = 2)

@@ -1,0 +1,62 @@
+# Hello, world!
+#
+# This is an example function named 'hello'
+# which prints 'Hello, world!'.
+#
+# You can learn more about package authoring with RStudio at:
+#
+#   http://r-pkgs.had.co.nz/
+#
+# Some useful keyboard shortcuts for package authoring:
+#
+#   Install Package:           'Cmd + Shift + B'
+#   Check Package:             'Cmd + Shift + E'
+#   Test Package:              'Cmd + Shift + T'
+calculateRFM <- function(data, default_r, default_f, default_m){
+                          weight_r <- default_r/sum(default_r, default_f, default_m)
+                          weight_f <- default_f/sum(default_r, default_f, default_m)
+                          weight_m <- default_m/sum(default_r, default_f, default_m)
+
+  print("caculated_weight")
+
+  # RFM measures
+  max.Date <- max(data$TransDate)
+
+  temp <- data[,list(
+    recency = as.numeric(max.Date - max(TransDate)),
+    frequency = .N,
+    monetary = mean(PurchAmount)),
+    by=Customer
+  ]
+
+
+  print("RFM Measure done")
+
+
+  # RFM scores
+  temp <- temp[,list(Customer,
+                     recency = as.numeric(cut2(-recency, g=3)),
+                     frequency = as.numeric(cut2(frequency, g=3)),
+                     monetary = as.numeric(cut2(monetary, g=3)))]
+
+
+
+  # Overall RFM score
+  temp[,finalscore:=weight_r*recency+weight_f*frequency+weight_m*monetary]
+
+
+
+  print("Overall RFM Measure done")
+
+
+
+  # RFM group
+  temp[,group:=round(finalscore)]
+
+
+
+  # Return final table
+  return(temp)
+}
+
+

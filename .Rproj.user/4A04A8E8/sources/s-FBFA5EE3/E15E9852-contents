@@ -1,0 +1,62 @@
+# Load libraries
+# install.packages("DT")
+library(data.table)
+library(shiny)
+library(leaflet)
+library(shinythemes)
+library(lubridate)
+library(DT)
+
+
+# Load data
+d <- fread("demographics_plus_zip_info.csv")
+d[ , JoinDate:=dmy(JoinDate, tz="UTC")]
+
+# ui part -----------------------------------------------------------------
+
+ui <- fluidPage(theme = shinytheme("simplex"),
+                titlePanel("Customer Map"),
+                sidebarLayout(
+                  sidebarPanel(# Copy the chunk below to make a group of checkboxes
+                    checkboxGroupInput("checkGroup", label = h3("Checkbox group"), 
+                                       choices = list("Female" = "f", 
+                                                      "Male" = "m",
+                                                      "Alien" = "alien"),
+                                       selected = c("f", "m", "alien")),
+                    # Copy the line below to make a slider range 
+                    sliderInput("slider_join_date",                                            
+                                label = ("Join date"), 
+                                min=dmy("01.01.1965"),
+                                max=dmy("31.12.2011"),
+                                value=c(dmy("01.01.1965"), dmy("31.12.2011"))),
+                    
+                    # Add the table output
+                    DTOutput('demographics_table')
+                  ),
+                  mainPanel(
+                    leafletOutput("mymap", height = "800px")
+                  )
+                )
+)
+
+# server part -------------------------------------------------------------
+
+server <- function(input, output, session) {
+  
+  # Define map and fill map with data points  
+    output$demographics_table = renderDT(d[, list(Customer, Gender)])
+    output$mymap <- renderLeaflet({
+    zips <- as.matrix(d[Gender %in% input$checkGroup & JoinDate > input$slider_join_date[1] & JoinDate <input$slider_join_date[2] , list(zip_longitude, zip_latitude)])
+    map <- leaflet()
+    map <- addTiles(map) 
+    map <- addMarkers(map, 
+                      data = zips, 
+                      clusterOptions = markerClusterOptions())
+    map <- setView(map, lat= 43, lng= -79, zoom = 3) # North America
+    # See: https://rstudio.github.io/leaflet/markers.html
+  })
+  
+}  
+
+# End server
+shinyApp(ui, server)

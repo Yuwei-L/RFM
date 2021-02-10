@@ -1,0 +1,29 @@
+# 1.	Create a function called addFirstTwo(vec) that adds the first two elements of a vector.
+addFirstTwo <- function(vec){
+  result <- vec[1]+vec[2]
+  return(result)
+}
+
+# 2.	Run the following code: addFirstTwo(c(1, "z")). What happens?
+addFirstTwo(c(1, "z"))
+
+# 3.	Now let’s debug. First, add a print() statement inside the function that shows the type of the first two elements of vec. 
+addFirstTwo <- function(vec){
+  print(class(vec[1]))
+  print(class(vec[2]))
+  result <- vec[1]+vec[2]
+  return(result)
+}
+addFirstTwo(c(1, "z"))
+
+# 4.	Instead of the print statements, use the function browser(). 
+addFirstTwo <- function(vec){
+  browser()
+  result <- vec[1]+vec[2]
+  return(result)
+}
+addFirstTwo(c(1, "z"))
+
+# 5.	Run the following code: mean(1:10, trim = NA). Use traceback to see which sub-function is causing the error.  
+mean(1:10, trim = NA)
+traceback()

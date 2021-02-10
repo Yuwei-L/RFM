@@ -1,0 +1,8 @@
+library(data.table)
+library(lubridate)
+library(RFM)
+
+transactions <- fread("transactions.csv")
+transactions[, TransDate := dmy(TransDate)]
+
+calculateRFM(transactions, 20, 20, 60)
